@@ -1,0 +1,92 @@
+---
+- hosts: localhost
+  connection: local
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Check if required environment variables are defined
+      fail:
+        msg: "missing required environment variable: '{{ item }}'"
+      when: lookup('env', item) is undefined
+      with_items:
+        - AWS_ACCESS_KEY_ID
+        - AWS_SECRET_ACCESS_KEY
+        - OS_AUTH_URL
+        - OS_PASSWORD
+        - OS_USERNAME
+
+    - name: Ensure dependencies are installed
+      pip:
+        name: shade
+        state: present
+      become: yes
+
+    - name: Create a compute instance for the AIO OpenStack deployment
+      os_server:
+        name: "{{ os_username }}-{{ os_env_name }}-openstack-aio"
+        image: "{{ os_image }}"
+        availability_zone: "{{ os_availability_zone }}"
+        flavor: "{{ os_flavor }}"
+        key_name: "{{ os_key_name }}"
+        security_groups:
+          - default
+        boot_from_volume: yes
+        terminate_volume: yes
+        volume_size: 100
+        wait: yes
+        state: present
+      register: aio_instance
+
+    - name: Add the instance to inventory
+      add_host:
+        name: "{{ aio_instance.server.public_v4 }}"
+        ansible_ssh_user: ubuntu
+        ansible_ssh_private_key_file: "{{ ansible_ssh_private_key_file }}"
+        groups: aio
+      changed_when: False
+
+- hosts: aio
+  become: no
+  gather_facts: no
+  pre_tasks:
+    - name: Wait for SSH
+      wait_for:
+        port: 22
+        host: "{{ inventory_hostname }}"
+        timeout: 320
+        state: started
+      delegate_to: localhost
+
+- hosts: aio
+  become: yes
+  roles:
+    - role: openstack-deploy-host
+    - role: openstack-target-host
+
+- hosts: aio
+  become: yes
+  roles:
+  tasks:
+    - name: Ensure the checkout dir exists
+      file:
+        path: "{{ checkout_dir }}"
+        state: directory
+
+    - name: Clone the specified version of openstack-ansible
+      git:
+        repo: https://github.com/openstack/openstack-ansible.git
+        version: "{{ ansible_openstack_tag }}"
+        dest: "{{ checkout_dir }}"
+        accept_hostkey: yes
+    - name: bootstrap-ansible.sh
+      shell: "{{ checkout_dir }}/scripts/bootstrap-ansible.sh"
+      args:
+        chdir: "{{ checkout_dir }}"
+    - name: bootstrap-aio.sh
+      shell: "{{ checkout_dir }}/scripts/bootstrap-aio.sh"
+      args:
+        chdir: "{{ checkout_dir }}"
+    - name: run-playbooks.sh
+      shell: "{{ checkout_dir }}/scripts/run-playbooks.sh"
+      args:
+        chdir: "{{ checkout_dir }}"

@@ -1,3 +1,0 @@
-ansible_openstack_tag: liberty
-checkout_dir: "/opt/tower-openstack/{{ tower_job_id | default(ansible_openstack_tag) }}"
-host_user: awx

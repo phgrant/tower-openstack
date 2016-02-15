@@ -1,0 +1,13 @@
+ansible_openstack_tag: liberty
+checkout_dir: /tmp/openstack-ansible
+
+# os_env_name:
+# os_key_name:
+# os_availability_zone:
+# os_image:
+# os_flavor:
+# os_project:
+
+os_auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+os_username: "{{ lookup('env', 'OS_USERNAME') }}"
+os_password: "{{ lookup('env', 'OS_PASSWORD') }}"
