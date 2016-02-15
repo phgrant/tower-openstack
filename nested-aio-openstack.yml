@@ -15,12 +15,6 @@
         - OS_PASSWORD
         - OS_USERNAME
 
-    - name: Ensure dependencies are installed
-      pip:
-        name: shade
-        state: present
-      become: yes
-
     - name: Create a compute instance for the AIO OpenStack deployment
       os_server:
         name: "{{ os_username }}-{{ os_env_name }}-openstack-aio"
