@@ -1,12 +1,13 @@
 ansible_openstack_tag: liberty
 checkout_dir: /tmp/openstack-ansible
 
-# os_env_name:
-# os_key_name:
-# os_availability_zone:
-# os_image:
-# os_flavor:
-# os_project:
+tower_admin_password: password
+os_env_name: demo
+os_key_name: tcross
+os_availability_zone: nova
+os_image: ubuntu-cloudimg-trustytahr-2016
+os_flavor: c3.large
+os_project: US.CSO Ansible Sales
 
 os_auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
 os_username: "{{ lookup('env', 'OS_USERNAME') }}"
