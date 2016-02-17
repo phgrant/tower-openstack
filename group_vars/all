@@ -1,7 +1,6 @@
 ansible_openstack_tag: liberty
 checkout_dir: /tmp/openstack-ansible
 
-tower_admin_password: password
 os_env_name: demo
 os_key_name: tcross
 os_availability_zone: nova

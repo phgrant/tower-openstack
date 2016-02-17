@@ -10,10 +10,10 @@
 
     - name: Set necessary variables when Tower cloud credential config is present
       set_fact:
-        os_auth_url: "{{ clouds.openstack.auth.auth_url }}"
-        os_username: "{{ clouds.openstack.auth.username }}"
-        os_password: "{{ clouds.openstack.auth.password }}"
-        os_project: "{{ clouds.openstack.auth.project_name }}"
+        os_auth_url: "{{ clouds.devstack.auth.auth_url }}"
+        os_username: "{{ clouds.devstack.auth.username }}"
+        os_password: "{{ clouds.devstack.auth.password }}"
+        os_project: "{{ clouds.devstack.auth.project_name }}"
       when: os_config_file != ''
 
     - name: Fail if fallback environment variables are not set
