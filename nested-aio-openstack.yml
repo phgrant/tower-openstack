@@ -4,16 +4,27 @@
   become: no
   gather_facts: no
   tasks:
-    - name: Check if required environment variables are defined
+    - name: Load Tower cloud credential config when it is present
+      include_vars: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
+      when: os_config_file != ''
+
+    - name: Set necessary variables when Tower cloud credential config is present
+      set_fact:
+        os_auth_url: "{{ clouds.openstack.auth.auth_url }}"
+        os_username: "{{ clouds.openstack.auth.username }}"
+        os_password: "{{ clouds.openstack.auth.password }}"
+        os_project: "{{ clouds.openstack.auth.project_name }}"
+      when: os_config_file != ''
+
+    - name: Fail if fallback environment variables are not set
       fail:
         msg: "missing required environment variable: '{{ item }}'"
-      when: lookup('env', item) is undefined
+      when: os_config_file == '' and lookup('env', item) is undefined
       with_items:
-        - AWS_ACCESS_KEY_ID
-        - AWS_SECRET_ACCESS_KEY
         - OS_AUTH_URL
         - OS_PASSWORD
         - OS_USERNAME
+        - OS_PROJECT
 
     - name: Create a compute instance for the AIO OpenStack deployment
       os_server:

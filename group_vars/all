@@ -7,8 +7,9 @@ os_key_name: tcross
 os_availability_zone: nova
 os_image: ubuntu-cloudimg-trustytahr-2016
 os_flavor: c3.large
-os_project: US.CSO Ansible Sales
 
+os_config_file: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
 os_auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
 os_username: "{{ lookup('env', 'OS_USERNAME') }}"
 os_password: "{{ lookup('env', 'OS_PASSWORD') }}"
+os_project: "{{ lookup('env', 'OS_PROJECT') }}"
