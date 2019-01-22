@@ -1,8 +1,8 @@
-ansible_openstack_tag: liberty
-checkout_dir: /tmp/openstack-ansible
+ansible_openstack_tag: queens
+checkout_dir: /opt/openstack-ansible
 
-os_env_name: demo
-os_key_name: tcross
+os_env_name: agnosticdba
+os_key_name: phgrant
 os_availability_zone: nova
 os_image: ubuntu-cloudimg-trustytahr-2016
 os_flavor: c3.large
