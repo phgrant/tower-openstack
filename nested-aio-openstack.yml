@@ -50,7 +50,7 @@
     - name: Add the instance to inventory
       add_host:
         name: "{{ aio_instance.server.public_v4 }}"
-        ansible_ssh_user: ubuntu
+        ansible_ssh_user: root
         ansible_ssh_private_key_file: "{{ ansible_ssh_private_key_file }}"
         groups: aio
       changed_when: False
