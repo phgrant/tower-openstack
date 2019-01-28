@@ -1,4 +1,4 @@
-ansible_openstack_tag: queens
+ansible_openstack_tag: stable/queens
 checkout_dir: /opt/openstack-ansible
 
 os_env_name: agnosticdba
