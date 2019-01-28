@@ -28,3 +28,4 @@
     - python-pip
     - python-dev
     - git
+    - tzdata

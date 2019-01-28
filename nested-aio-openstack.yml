@@ -1,60 +1,4 @@
 ---
-- hosts: localhost
-  connection: local
-  become: no
-  gather_facts: no
-  tasks:
-    - name: Load Tower cloud credential config when it is present
-      include_vars: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
-      when: os_config_file != ''
-
-    - name: Set necessary variables when Tower cloud credential config is present
-      set_fact:
-        os_auth_url: "{{ clouds.devstack.auth.auth_url }}"
-        os_username: "{{ clouds.devstack.auth.username }}"
-        os_password: "{{ clouds.devstack.auth.password }}"
-        os_project: "{{ clouds.devstack.auth.project_name }}"
-      when: os_config_file != ''
-
-    - name: Fail if fallback environment variables are not set
-      fail:
-        msg: "missing required environment variable: '{{ item }}'"
-      when: os_config_file == '' and lookup('env', item) is undefined
-      with_items:
-        - OS_AUTH_URL
-        - OS_PASSWORD
-        - OS_USERNAME
-        - OS_PROJECT
-
-    - name: Create a compute instance for the AIO OpenStack deployment
-      os_server:
-        name: "{{ os_username }}-{{ os_env_name }}-openstack-aio"
-        image: "{{ os_image }}"
-        availability_zone: "{{ os_availability_zone }}"
-        flavor: "{{ os_flavor }}"
-        key_name: "{{ os_key_name }}"
-        security_groups:
-          - default
-        boot_from_volume: yes
-        terminate_volume: yes
-        volume_size: 100
-        wait: yes
-        auth:
-          auth_url: "{{ os_auth_url }}"
-          username: "{{ os_username }}"
-          password: "{{ os_password }}"
-          project_name: "{{ os_project }}"
-        state: present
-      register: aio_instance
-
-    - name: Add the instance to inventory
-      add_host:
-        name: "{{ aio_instance.server.public_v4 }}"
-        ansible_ssh_user: root
-        ansible_ssh_private_key_file: "{{ ansible_ssh_private_key_file }}"
-        groups: aio
-      changed_when: False
-
 - hosts: aio
   become: no
   gather_facts: no
@@ -88,15 +32,15 @@
         version: "{{ ansible_openstack_tag }}"
         dest: "{{ checkout_dir }}"
         accept_hostkey: yes
-    - name: bootstrap-ansible.sh
-      shell: "{{ checkout_dir }}/scripts/bootstrap-ansible.sh"
-      args:
-        chdir: "{{ checkout_dir }}"
-    - name: bootstrap-aio.sh
-      shell: "{{ checkout_dir }}/scripts/bootstrap-aio.sh"
-      args:
-        chdir: "{{ checkout_dir }}"
-    - name: run-playbooks.sh
-      shell: "{{ checkout_dir }}/scripts/run-playbooks.sh"
-      args:
-        chdir: "{{ checkout_dir }}"
+#   - name: bootstrap-ansible.sh
+#     shell: "{{ checkout_dir }}/scripts/bootstrap-ansible.sh"
+#     args:
+#       chdir: "{{ checkout_dir }}"
+#   - name: bootstrap-aio.sh
+#     shell: "{{ checkout_dir }}/scripts/bootstrap-aio.sh"
+#     args:
+#       chdir: "{{ checkout_dir }}"
+#   - name: run-playbooks.sh
+#     shell: "{{ checkout_dir }}/scripts/run-playbooks.sh"
+#     args:
+#       chdir: "{{ checkout_dir }}"
